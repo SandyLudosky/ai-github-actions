@@ -1,29 +1,57 @@
-name: Python Install Check
+name: Python Install & GitHub Models
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:
+
+permissions:
+  contents: read
+  models: read
 
 jobs:
   install:
+    name: Install Python dependencies
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements.txt
 
-      - name: Install dependencies
+      - run: echo "::notice::✅ Python dependencies installed successfully!"
+
+  call-model:
+    name: Use GitHub Models
+    runs-on: ubuntu-latest
+    needs: install
+
+    steps:
+      - name: Call AI model
+        id: ai_call
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          pip install -r requirements.txt
+          RESPONSE=$(curl -s "https://models.github.ai/inference/chat/completions" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -d '{
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Explain the concept of recursion."
+                }
+              ],
+              "model": "openai/gpt-4o"
+            }')
 
-      - name: Installation complete
-        run: echo "✅ Python dependencies installed successfully!"
+          echo "raw_response=$RESPONSE" >> $GITHUB_OUTPUT
+
+      - name: Generate Result
+        run: |
+          echo "🤖 AI Model Response:"
+          echo '${{ steps.ai_call.outputs.raw_response }}'
