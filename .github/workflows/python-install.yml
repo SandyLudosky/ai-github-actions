@@ -50,11 +50,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install python-dotenv rich colorama openai pytest
 
-      - name: Set OPENAI_API_KEY for tests (GitHub Models)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set GitHub Models auth env vars
         run: |
-          echo "OPENAI_API_KEY=$GITHUB_TOKEN" >> $GITHUB_ENV
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+          echo "OPENAI_API_KEY=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
 
       - name: Run tests
         run: pytest -q
@@ -62,7 +61,8 @@ jobs:
   generate-docs:
     name: Generate GitHub Models Markdown
     runs-on: ubuntu-latest
-    needs: tests  # only generate docs if tests pass
+    needs: tests   # only generate docs if tests pass
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout repository
