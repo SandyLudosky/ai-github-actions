@@ -4,3 +4,4 @@ colorama==0.4.6
 openai>=1.8.0           # OpenAI API
 pytest>=7.0.0  # For testing
 pytest
+pytest
