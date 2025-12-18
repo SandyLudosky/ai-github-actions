@@ -28,27 +28,28 @@ jobs:
   # add one step here to call the GitHub Models action to download a model
   call-model:
     runs-on: ubuntu-latest
-    name: Call AI model
+    name: Call GitHub model
     steps:
       - name: generate text using GitHub Models
         id: generate_text
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          RESPONSE=$(curl "https://models.github.ai/inference/chat/completions" \
+          response=$(curl "https://models.github.ai/inference/chat/completions" \
              -H "Content-Type: application/json" \
              -H "Authorization: Bearer $GITHUB_TOKEN" \
              -d '{
               "messages": [
                   {
                      "role": "user",
-                     "content": "Explain the steps to create a GitHub Action workflow."
+                     "content": "Explain the steps to create workflow files in GitHub Actions."
                   }
                ],
-               "model": "openai/gpt-4.1-mini"
+               "model": "openai/gpt-4o"
             }')
-          echo "raw_response=$RESPONSE" >> $GITHUB_OUTPUT
-      - name: Display response
-        run: |
-          echo "Response from model:"
-          echo "${{ steps.generate_text.outputs.raw_response }}"
+          echo "raw_reponse=$response" >> $GITHUB_OUTPUT
+
+      - name: display AI response
+        run: echo "::notice::✅ GitHub Model called successfully!"
+             echo "${{ steps.generate_text.outputs.raw_reponse }}"
+ 
