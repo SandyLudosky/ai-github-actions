@@ -25,33 +25,30 @@ jobs:
 
       - run: echo "::notice::✅ Python dependencies installed successfully!"
 
+  # add one step here to call the GitHub Models action to download a model
   call-model:
-    name: Use GitHub Models
     runs-on: ubuntu-latest
-    needs: install
-
+    name: Call AI model
     steps:
-      - name: Call AI model
-        id: ai_call
+      - name: generate text using GitHub Models
+        id: generate_text
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          RESPONSE=$(curl -s "https://models.github.ai/inference/chat/completions" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -d '{
+          RESPONSE=$(curl "https://models.github.ai/inference/chat/completions" \
+             -H "Content-Type: application/json" \
+             -H "Authorization: Bearer $GITHUB_TOKEN" \
+             -d '{
               "messages": [
-                {
-                  "role": "user",
-                  "content": "Explain the concept of recursion."
-                }
-              ],
-              "model": "openai/gpt-4o"
+                  {
+                     "role": "user",
+                     "content": "Explain the steps to create "
+                  }
+               ],
+               "model": "openai/gpt-4o"
             }')
-
           echo "raw_response=$RESPONSE" >> $GITHUB_OUTPUT
-
-      - name: Generate Result
+      - name: Display response
         run: |
-          echo "🤖 AI Model Response:"
-          echo '${{ steps.ai_call.outputs.raw_response }}'
+          echo "Response from model:"
+          echo "${{ steps.generate_text.outputs.raw_response }}"
