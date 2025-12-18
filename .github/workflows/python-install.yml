@@ -42,10 +42,10 @@ jobs:
               "messages": [
                   {
                      "role": "user",
-                     "content": "Explain the steps to create "
+                     "content": "Explain the steps to create a GitHub Action workflow."
                   }
                ],
-               "model": "openai/gpt-4o"
+               "model": "openai/gpt-4.1-mini"
             }')
           echo "raw_response=$RESPONSE" >> $GITHUB_OUTPUT
       - name: Display response
