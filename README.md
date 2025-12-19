@@ -227,3 +227,7 @@ shCopy code
 
 `python main.py`
 
+
+## GitHub Models
+
+See: [docs/github-models.md](docs/github-models.md)
