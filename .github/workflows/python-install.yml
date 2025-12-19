@@ -56,8 +56,8 @@ jobs:
           echo "OPENAI_API_KEY=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
 
       - name: Run tests
-        run: pytest -q
-
+        run: pytest -q       
+  # add one step here to call the GitHub Models action to download a model
   generate-docs:
     name: Generate GitHub Models Markdown
     runs-on: ubuntu-latest
